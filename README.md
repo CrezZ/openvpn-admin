@@ -1,5 +1,13 @@
 # OpenVPN Admin
 
+## New from original fork:
+- corrected php versions in install manual
+- add nginx manual
+- add port-share manual
+- integrate keys into client config files
+
+
+
 ## Summary
 Administrate its OpenVPN with a web interface (logs visualisations, users managing...) and a SQL database.
 
@@ -13,7 +21,7 @@ Administrate its OpenVPN with a web interface (logs visualisations, users managi
   * Fresh install of OpenVPN
   * Web server (NGinx, Apache...)
   * MySQL
-  * PHP >= 5.5 with modules:
+  * PHP  with modules:
     * zip
     * pdo_mysql
   * bower
@@ -25,7 +33,7 @@ Administrate its OpenVPN with a web interface (logs visualisations, users managi
 ### Debian 8 Jessie
 
 ````
-# apt-get install openvpn apache2 php5-mysql mysql-server php5 nodejs unzip git wget sed npm curl
+# apt-get install openvpn php-mysql php-zip mysql-server php nodejs unzip git wget sed npm curl
 # npm install -g bower
 # ln -s /usr/bin/nodejs /usr/bin/node
 ````
@@ -33,7 +41,7 @@ Administrate its OpenVPN with a web interface (logs visualisations, users managi
 ### Debian 9 Stretch
 
 ````
-# apt-get install openvpn apache2 php-mysql mysql-server php-zip php nodejs unzip git wget sed npm curl
+# apt-get install openvpn php-mysql php-zip mysql-server php nodejs unzip git wget sed npm curl
 # npm install -g bower
 # ln -s /usr/bin/nodejs /usr/bin/node
 ````
@@ -59,12 +67,37 @@ Only tested on Debian Jessie. Feel free to open issues.
   * Setup OpenVPN and the web application:
 
         $ cd ~/my_coding_workspace
-        $ git clone https://github.com/Chocobozzz/OpenVPN-Admin openvpn-admin
+        $ git clone https://github.com/CrezZ/openvpn-admin openvpn-admin
         $ cd openvpn-admin
         # ./install.sh /var/www www-data www-data
 
   * Setup the web server (Apache, NGinx...) to serve the web application.
-  * Create the admin of the web application by visiting `http://your-installation/index.php?installation`
+  
+  ## NGINX
+  
+  #uncomment this to share port 443 with openvpn
+  #listen 127.0.0.1:444;
+  
+  location /openvpn-admin {
+                root /var/www;
+                index index.php;
+        }
+
+        location ~ ^/openvpn-admin/.*\.php$ {
+                fastcgi_pass unix:/var/run/php/php7.1-fpm.sock;
+                #fastcgi_pass 127.0.0.1:9000;
+                fastcgi_index index.php;
+                include fastcgi_params;
+                fastcgi_param   SCRIPT_FILENAME /var/www$fastcgi_script_name;
+            }
+
+## Share port NGINX and OPENVPN
+Open /etc/openvpn/server.conf
+add:
+  port-share 127.0.0.1 444
+  
+  * Create the admin of the web application by visiting `http://your-installation/openvpn-admin/index.php?installation`
+
 
 ## Usage
 
