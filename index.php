@@ -21,48 +21,67 @@
     // Error ?
     if($data && passEqual($_POST['configuration_pass'], $data['user_pass'])) {
       // Thanks http://stackoverflow.com/questions/4914750/how-to-zip-a-whole-folder-using-php
+
+	$ext_conf=".conf";
       if($_POST['configuration_os'] == "gnu_linux") {
         $conf_dir = 'gnu-linux';
       } elseif($_POST['configuration_os'] == "osx_viscosity") {
         $conf_dir = 'osx-viscosity';
       } else {
         $conf_dir = 'windows';
+	$ext_conf=".ovpn";
       }
       $rootPath = realpath("./client-conf/$conf_dir");
 
       // Initialize archive object ;;;; why doing this every time the user logs in, when the cert is static?
       $archive_base_name = "openvpn-$conf_dir";
-      $archive_name = "$archive_base_name.zip";
-      $archive_path = "./client-conf/$archive_name";
-      $zip = new ZipArchive();
-      $zip->open($archive_path, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+#      $archive_name = "$archive_base_name.zip";
+      $config_name = $_POST['configuration_username'].$ext_conf;
+#      $archive_path = "./client-conf/$archive_name";
+      $config_path = "./client-conf/".$_POST['configuration_username'].$ext_conf;
+      $config_src_path = "./client-conf/$conf_dir/client".$ext_conf;
 
-      $files = new RecursiveIteratorIterator(
-        new RecursiveDirectoryIterator($rootPath),
-        RecursiveIteratorIterator::LEAVES_ONLY
-      );
+	    //create embedded-keys file
+	unlink($config_path); 
+	$fp1 = fopen($config_path, 'a+');
+	$file1 = file_get_contents($rootPath."/client".$ext_conf);
+	fwrite($fp1, $file1);
+	$file2 = file_get_contents($rootPath."/ta.key");
+	fwrite($fp1, "<key> \n".$file2."\n </key> \n");
+	$file3 = file_get_contents($rootPath."/ca.crt");
+	fwrite($fp1, "<ca> \n".$file3."\n </ca> \n");
+	fclose($fp1);
 
-      foreach ($files as $name => $file) {
-        // Skip directories (they would be added automatically)
-        if (!$file->isDir()) {
-          // Get real and relative path for current file
-          $filePath = $file->getRealPath();
-          $relativePath = substr($filePath, strlen($rootPath) + 1);
+#      $zip = new ZipArchive();
+#      $zip->open($archive_path, ZipArchive::CREATE | ZipArchive::OVERWRITE);
 
-          // Add current file to archive
-          $zip->addFile($filePath, "$archive_base_name/$relativePath");
-        }
-      }
+#      $files = new RecursiveIteratorIterator(
+#        new RecursiveDirectoryIterator($rootPath),
+#        RecursiveIteratorIterator::LEAVES_ONLY
+#      );
+
+#      foreach ($files as $name => $file) {
+#        // Skip directories (they would be added automatically)
+#        if (!$file->isDir()) {
+#          // Get real and relative path for current file
+#          $filePath = $file->getRealPath();
+#          $relativePath = substr($filePath, strlen($rootPath) + 1);
+#
+#          // Add current file to archive
+#          $zip->addFile($filePath, "$archive_base_name/$relativePath");
+#        }
+#      }
 
       // Zip archive will be created only after closing object
-      $zip->close();
+#      $zip->close();
 
       //then send the headers to foce download the zip file
       header("Content-type: application/zip");
-      header("Content-Disposition: attachment; filename=$archive_name");
+      header("Content-Disposition: attachment; filename=$config_name");
       header("Pragma: no-cache");
       header("Expires: 0");
-      readfile($archive_path);
+      readfile($config_path);
+	exit(0);
     }
     else {
       $error = true;
