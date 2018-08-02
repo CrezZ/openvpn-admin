@@ -1,0 +1,19 @@
+{
+listen 80;
+location /openvpn-admin { 
+  root /var/www; 
+  index index.php; 
+ }
+
+    location ~ ^/openvpn-admin/.*\.php$ {
+            fastcgi_pass unix:/var/run/php/php7.1-fpm.sock;
+            #fastcgi_pass 127.0.0.1:9000;
+            fastcgi_index index.php;
+            include fastcgi_params;
+            fastcgi_param   SCRIPT_FILENAME /var/www$fastcgi_script_name;
+        }
+
+ location /openvpn-admin/client-conf {
+    deny  all;
+    }
+}

@@ -27,6 +27,9 @@
         $conf_dir = 'gnu-linux';
       } elseif($_POST['configuration_os'] == "osx_viscosity") {
         $conf_dir = 'osx-viscosity';
+      } elseif($_POST['configuration_os'] == "android") {
+        $conf_dir = 'android';
+	$ext_conf=".ovpn";
       } else {
         $conf_dir = 'windows';
 	$ext_conf=".ovpn";
@@ -47,9 +50,21 @@
 	$file1 = file_get_contents($rootPath."/client".$ext_conf);
 	fwrite($fp1, $file1);
 	$file2 = file_get_contents($rootPath."/ta.key");
-	fwrite($fp1, "<key> \n".$file2."\n </key> \n");
+	fwrite($fp1, "<tls-auth> \n".$file2."\n</tls-auth>\n");
 	$file3 = file_get_contents($rootPath."/ca.crt");
-	fwrite($fp1, "<ca> \n".$file3."\n </ca> \n");
+	fwrite($fp1, "<ca> \n".$file3."\n</ca>\n");
+
+      if($_POST['configuration_os'] == "android") {
+	//add client certificate
+	$file4 = file_get_contents($rootPath."/client.crt");
+	fwrite($fp1, "<cert> \n".$file4."\n</cert>\n");
+	$file5 = file_get_contents($rootPath."/client.key");
+	fwrite($fp1, "<key> \n".$file5."\n</key>\n");
+
+
+}
+
+
 	fclose($fp1);
 
 #      $zip = new ZipArchive();
@@ -76,7 +91,7 @@
 #      $zip->close();
 
       //then send the headers to foce download the zip file
-      header("Content-type: application/zip");
+      header("Content-type: application/octet-stream");
       header("Content-Disposition: attachment; filename=$config_name");
       header("Pragma: no-cache");
       header("Expires: 0");

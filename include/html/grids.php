@@ -122,6 +122,7 @@ function getHistory($cfg_file, $accordion_id, $open_first_history_tab = false) {
             <li class="active"><a data-toggle="tab" href="#menu-1-0"><span class="glyphicon glyphicon-heart" aria-hidden="true"></span> Linux</a></li>
             <li><a data-toggle="tab" href="#menu-1-1"><span class="glyphicon glyphicon-th-large" aria-hidden="true"></span> Windows</a></li>
             <li><a data-toggle="tab" href="#menu-1-2"><span class="glyphicon glyphicon-apple" aria-hidden="true"></span> OSX</a></li>
+            <li><a data-toggle="tab" href="#menu-1-3"><span class="glyphicon glyphicon-heart" aria-hidden="true"></span> Android</a></li>
 
             <li id="save-config-btn" class="pull-right hidden"><a class="progress-bar-striped" href="javascript:;"><span class="glyphicon glyphicon-save" aria-hidden="true"></span></a></li>
          </ul>
@@ -141,6 +142,13 @@ function getHistory($cfg_file, $accordion_id, $open_first_history_tab = false) {
             <div id="menu-1-2" class="tab-pane fade">
 
                <textarea class="form-control" data-config-file="<?= $cfg_file='client-conf/osx-viscosity/client.conf' ?>" name="" id="" cols="30" rows="20"><?= file_get_contents($cfg_file) ?></textarea>
+               <?= getHistory($cfg_file, ++$accId) ?>
+
+            </div>
+
+            <div id="menu-1-3" class="tab-pane fade">
+
+               <textarea class="form-control" data-config-file="<?= $cfg_file='client-conf/android/client.ovpn' ?>" name="" id="" cols="30" rows="20"><?= file_get_contents($cfg_file) ?></textarea>
                <?= getHistory($cfg_file, ++$accId) ?>
 
             </div>
