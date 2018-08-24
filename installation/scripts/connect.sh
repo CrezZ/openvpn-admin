@@ -23,8 +23,26 @@ then
 fi
 
 
+
+
+
 # We insert data in the log table
 mysql -h$HOST -P$PORT -u$USER -p$PASS $DB -e "INSERT INTO log (log_id, user_id, log_trusted_ip, log_trusted_port, log_remote_ip, log_remote_port, log_start_time, log_end_time, log_received, log_send) VALUES(NULL, '$common_name','$trusted_ip', '$trusted_port','$ifconfig_pool_remote_ip', '$remote_port_1', now(),NULL, '$bytes_received', '$bytes_sent')"
 
 # We specify that the user is online
 mysql -h$HOST -P$PORT -u$USER -p$PASS $DB -e "UPDATE user SET user_online=1 WHERE user_id='$common_name'"
+
+#create CCD with static IP if needed
+user_ip1=$(mysql -h$HOST -P$PORT -u$USER -p$PASS $DB -sN -e "select user_ip1 from user where user_id='$common_name'")
+
+if [ "$user_ip1" == '' ]; then
+  echo "no static ip"
+  exit 0
+fi
+
+#create ccd
+
+cat <<EOT > /etc/openvpn/ccd/$common_name
+ifconfig-push $user_ip1 255.255.255.0
+
+EOT

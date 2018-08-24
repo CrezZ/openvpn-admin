@@ -20,6 +20,7 @@
         do {
           $list[] = array("user_id" => $data['user_id'],
                           "user_pass" => $data['user_pass'],
+                          "user_ip1" => $data['user_ip1'],
                           "user_mail" => $data['user_mail'],
                           "user_phone" => $data['user_phone'],
                           "user_online" => $data['user_online'],
@@ -136,15 +137,17 @@
     $phone = "";
     $online = 0;
     $enable = 1;
+    $ip1 = $_POST['user_ip1'];;
     $start = NULL;
     $end = NULL;
 
-    $req = $bdd->prepare('INSERT INTO user (user_id, user_pass, user_mail, user_phone, user_online, user_enable, user_start_date, user_end_date)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
-    $req->execute(array($id, $pass, $mail, $phone, $online, $enable, $start, $end));
+    $req = $bdd->prepare('INSERT INTO user (user_id, user_pass, user_mail, user_phone, user_online, user_enable, user_start_date, user_end_date, user_ip1)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)');
+    $req->execute(array($id, $pass, $mail, $phone, $online, $enable, $start, $end, $ip1));
 
     $res = array("user_id" => $id,
       "user_pass" => $pass,
+      "user_ip1" => $ip1,
       "user_mail" => $mail ,
       "user_phone" => $phone,
       "user_online" => $online,
@@ -158,7 +161,7 @@
 
   // ---------------- UPDATE USER ----------------
   else if(isset($_POST['set_user'])){
-    $valid = array("user_id", "user_pass", "user_mail", "user_phone", "user_enable", "user_start_date", "user_end_date");
+    $valid = array("user_id", "user_pass", "user_mail", "user_phone", "user_enable", "user_start_date", "user_end_date", "user_ip1");
 
     $field = $_POST['name'];
     $value = $_POST['value'];

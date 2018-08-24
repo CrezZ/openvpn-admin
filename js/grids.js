@@ -42,14 +42,15 @@ $(function () {
   var $modalUserAdd = $('#modal-user-add');
   var $userAddSave = $modalUserAdd.find('#modal-user-add-save');
 
-  function addUser(username, password) {
+  function addUser(username, password, ip1) {
     $.ajax({
       url: gridsUrl,
       method: 'POST',
       data: {
         add_user: true,
         user_id: username,
-        user_pass: password
+        user_pass: password,
+        user_ip1: ip1
       },
       success: function() {
         refreshTable($userTable);
@@ -199,6 +200,7 @@ $(function () {
     columns: [
       { title: "ID", field: "user_id", editable: userEditable },
       { title: "Pass", field: "user_pass", editable: userEditable },
+      { title: "IP", field: "user_ip1", editable: userEditable },
       { title: "Mail", field: "user_mail", editable: userEditable },
       { title: "Phone", field: "user_phone", editable: userEditable },
       {
@@ -237,7 +239,8 @@ $(function () {
   $userAddSave.on('click', function () {
     var $usernameInput = $modalUserAdd.find('input[name=username]');
     var $passwordInput = $modalUserAdd.find('input[name=password]');
-    addUser($usernameInput.val(), $passwordInput.val());
+    var $ipInput = $modalUserAdd.find('input[name=ip1]');
+    addUser($usernameInput.val(), $passwordInput.val(), $ipInput.val());
     $modalUserAdd.modal('hide');
   });
 

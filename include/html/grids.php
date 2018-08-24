@@ -59,6 +59,10 @@ function getHistory($cfg_file, $accordion_id, $open_first_history_tab = false) {
                         <label for="modal-user-add-password">Password</label>
                         <input type="password" name="password" id="modal-user-add-password" class="form-control" />
                      </div>
+                     <div class="form-group">
+                        <label for="modal-user-add-ip1">Static internal IP</label>
+                        <input type="text" name="ip1" id="modal-user-add-ip1" class="form-control" />
+                     </div>
                   </div>
                   <div class="modal-footer">
                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
