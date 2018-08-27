@@ -20,8 +20,51 @@ $(function () {
     return "<span class='glyphicon glyphicon-remove action'></span";
   }
 
+var helpers =
+{
+    buildDropdown: function(result, dropdown, emptyMessage)
+    {
+        // Remove current options
+        dropdown.html('');
+        // Add the empty option with the empty message
+        dropdown.append('<option value="">' + emptyMessage + '</option>');
+        // Check result isnt empty
+        if(result != '')
+        {
+            // Loop through each of the results and append the option to the dropdown
+            $.each(result, function(k, v) {
+                dropdown.append('<option value="' + v.ext_ip + '">' + v.ext_ip+' '+v.comment + '</option>');
+            });
+        }
+    }
+}
+
+var ext_ip;
+
   function refreshTable($table) {
     $table.bootstrapTable('refresh');
+  }
+
+  function InitDropdown($table) {
+    $.ajax({
+            type: "GET",
+            url: gridsUrl+'?select=ext_ip',
+
+            success: function(data)
+            {
+	    ext_ip='[{value:null,text:"--NONE--"},';
+	    var obj = JSON.parse(data);
+            $.each(obj, function(k, v) {
+                ext_ip=ext_ip+'{value:"'+v.ext_ip+'",text:"'+v.ext_ip+' '+v.comment+'"},';
+            });
+		ext_ip=ext_ip+']';
+                helpers.buildDropdown(
+                    jQuery.parseJSON(data),
+                    $('#dropdown-ext_ip'),
+                    'Select an option'
+                );
+            }
+        });
   }
 
   function onAjaxError (xhr, textStatus, error) {
@@ -50,7 +93,8 @@ $(function () {
         add_user: true,
         user_id: username,
         user_pass: password,
-        user_ip1: ip1
+        user_ip1: ip1,
+        user_ip2: ip2
       },
       success: function() {
         refreshTable($userTable);
@@ -102,6 +146,26 @@ $(function () {
       refreshTable($userTable);
     }
   }
+
+  var userEditable2 = {
+    url: gridsUrl,
+    type: 'select', 
+    source: function(){
+return ext_ip;
+},
+     method: 'POST',
+     error: onAjaxError,
+
+    params: function (params) {
+      params.set_user = true;
+
+      return params;
+    },
+    success: function () {
+      refreshTable($userTable);
+    }
+  }
+
 
   function updateConfig(config_file, config_content) {
     $.ajax({
@@ -187,6 +251,7 @@ $(function () {
   // -------------------- USERS --------------------
 
   // Bootstrap table definition
+InitDropdown();
   $userTable.bootstrapTable({
     url: gridsUrl,
     sortable: false,
@@ -200,7 +265,8 @@ $(function () {
     columns: [
       { title: "ID", field: "user_id", editable: userEditable },
       { title: "Pass", field: "user_pass", editable: userEditable },
-      { title: "IP", field: "user_ip1", editable: userEditable },
+      { title: "int IP", field: "user_ip1", editable: userEditable },
+      { title: "ext IP", field: "user_ip2", editable: userEditable2 },
       { title: "Mail", field: "user_mail", editable: userEditable },
       { title: "Phone", field: "user_phone", editable: userEditable },
       {
@@ -240,7 +306,8 @@ $(function () {
     var $usernameInput = $modalUserAdd.find('input[name=username]');
     var $passwordInput = $modalUserAdd.find('input[name=password]');
     var $ipInput = $modalUserAdd.find('input[name=ip1]');
-    addUser($usernameInput.val(), $passwordInput.val(), $ipInput.val());
+    var $ip2Input = $modalUserAdd.find('input[name=ip2]');
+    addUser($usernameInput.val(), $passwordInput.val(), $ipInput.val(), $ip2Input.val());
     $modalUserAdd.modal('hide');
   });
 
