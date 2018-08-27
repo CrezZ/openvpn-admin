@@ -13,7 +13,7 @@
 
     // Select the users
     if($_GET['select'] == "user"){
-      $req = $bdd->prepare('SELECT * FROM user');
+      $req = $bdd->prepare('SELECT * FROM user order by user_id+0');
       $req->execute();
 
       if($data = $req->fetch()) {
@@ -21,12 +21,32 @@
           $list[] = array("user_id" => $data['user_id'],
                           "user_pass" => $data['user_pass'],
                           "user_ip1" => $data['user_ip1'],
+                          "user_ip2" => $data['user_ip2'],
                           "user_mail" => $data['user_mail'],
                           "user_phone" => $data['user_phone'],
                           "user_online" => $data['user_online'],
                           "user_enable" => $data['user_enable'],
                           "user_start_date" => $data['user_start_date'],
                           "user_end_date" => $data['user_end_date']);
+        } while($data = $req->fetch());
+
+        echo json_encode($list);
+      } 
+      else{
+        $list = array();
+        echo json_encode($list);
+      }
+
+    }
+   else if($_GET['select'] == "ext_ip"){
+      $req = $bdd->prepare('SELECT * FROM ext_ip');
+      $req->execute();
+
+      if($data = $req->fetch()) {
+        do {
+          $list[] = array("ext_ip" => $data['ip'],
+                          "comment" => $data['comment'],
+                          );
         } while($data = $req->fetch());
 
         echo json_encode($list);
@@ -37,7 +57,6 @@
         echo json_encode($list);
       }
     }
-
     // Select the logs
     else if($_GET['select'] == "log" && isset($_GET['offset'], $_GET['limit'])){
       $offset = intval($_GET['offset']);
@@ -137,17 +156,19 @@
     $phone = "";
     $online = 0;
     $enable = 1;
-    $ip1 = $_POST['user_ip1'];;
+    $ip1 = $_POST['user_ip1'];
+    $ip2 = $_POST['user_ip2'];
     $start = NULL;
     $end = NULL;
 
-    $req = $bdd->prepare('INSERT INTO user (user_id, user_pass, user_mail, user_phone, user_online, user_enable, user_start_date, user_end_date, user_ip1)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)');
-    $req->execute(array($id, $pass, $mail, $phone, $online, $enable, $start, $end, $ip1));
+    $req = $bdd->prepare('INSERT INTO user (user_id, user_pass, user_mail, user_phone, user_online, user_enable, user_start_date, user_end_date, user_ip1,user_ip2)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+    $req->execute(array($id, $pass, $mail, $phone, $online, $enable, $start, $end, $ip1, $ip2));
 
     $res = array("user_id" => $id,
       "user_pass" => $pass,
       "user_ip1" => $ip1,
+      "user_ip2" => $ip2,
       "user_mail" => $mail ,
       "user_phone" => $phone,
       "user_online" => $online,
@@ -161,7 +182,7 @@
 
   // ---------------- UPDATE USER ----------------
   else if(isset($_POST['set_user'])){
-    $valid = array("user_id", "user_pass", "user_mail", "user_phone", "user_enable", "user_start_date", "user_end_date", "user_ip1");
+    $valid = array("user_id", "user_pass", "user_mail", "user_phone", "user_enable", "user_start_date", "user_end_date", "user_ip1", "user_ip2");
 
     $field = $_POST['name'];
     $value = $_POST['value'];

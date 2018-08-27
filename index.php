@@ -42,7 +42,7 @@
       $config_name = $_POST['configuration_username'].$ext_conf;
 #      $archive_path = "./client-conf/$archive_name";
       $config_path = "./client-conf/".$_POST['configuration_username'].$ext_conf;
-      $config_src_path = "./client-conf/$conf_dir/client".$ext_conf;
+      $config_src_path = "./client-conf/$conf_dir/client".$ext_conf;;
 
 	    //create embedded-keys file
 	unlink($config_path); 

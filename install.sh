@@ -225,8 +225,8 @@ cp -r "$base_path/installation/scripts" "/etc/openvpn/"
 chmod +x "/etc/openvpn/scripts/"*
 
 # Configure MySQL in openvpn scripts
-sed -i "s/USER=''/USER='$mysql_user'/" "/etc/openvpn/scripts/config.sh"
-sed -i "s/PASS=''/PASS='$mysql_pass'/" "/etc/openvpn/scripts/config.sh"
+sed -i "s/USER=.*$/USER='$mysql_user'/" "/etc/openvpn/scripts/config.sh"
+sed -i "s/PASS=.*$/PASS='$mysql_pass'/" "/etc/openvpn/scripts/config.sh"
 
 # Create the directory of the web application
 mkdir "$openvpn_admin"
@@ -241,7 +241,7 @@ sed -i "s/\$pass = '';/\$pass = '$mysql_pass';/" "./include/config.php"
 
 # Replace in the client configurations with the ip of the server and openvpn protocol
 for file in "./client-conf/gnu-linux/client.conf" "./client-conf/osx-viscosity/client.conf" "./client-conf/windows/client.ovpn"; do
-  sed -i "s/remote xxx\.xxx\.xxx\.xxx 443/remote $ip_server $server_port/" $file
+  sed -i "s/remote .*$/remote $ip_server $server_port/" $file
 
   if [ $openvpn_proto = "udp" ]; then
     sed -i "s/proto tcp-client/proto udp/" $file

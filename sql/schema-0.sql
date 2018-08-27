@@ -26,6 +26,9 @@ CREATE TABLE IF NOT EXISTS `user` (
   `user_pass` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `user_mail` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
   `user_phone` varchar(16) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `user_ip1` varchar(16) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `user_ip2` varchar(16) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `user_phone` varchar(16) COLLATE utf8_unicode_ci DEFAULT NULL,
   `user_online` tinyint(1) NOT NULL DEFAULT '0',
   `user_enable` tinyint(1) NOT NULL DEFAULT '1',
   `user_start_date` date NOT NULL,
@@ -33,3 +36,8 @@ CREATE TABLE IF NOT EXISTS `user` (
   PRIMARY KEY (`user_id`),
   KEY `user_pass` (`user_pass`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `ext_ip` (
+  `ip` varchar(16) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `comment` varchar(16) COLLATE utf8_unicode_ci DEFAULT NULL
+}
